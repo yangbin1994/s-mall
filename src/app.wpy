@@ -1,4 +1,15 @@
 <style lang="less">
+  @import "./themes/fn.less";
+
+  page {
+    line-height: 1.6;
+    font-family: @weuiFontDefault;
+  }
+
+  icon {
+    vertical-align: middle;
+  }
+
   .container {
     height: 100%;
     display: flex;
@@ -21,7 +32,27 @@
 
   export default class extends wepy.app {
     config = {
-      pages: ["pages/index"],
+      pages: [
+        "pages/index",
+        "pages/shopcart",
+        "pages/user",
+      ],
+      tabBar: {
+        list: [
+          {
+            pagePath: "pages/index",
+            text: "小店铺",
+          },
+          {
+            pagePath: "pages/shopcart",
+            text: "购物车",
+          },
+          {
+            pagePath: "pages/user",
+            text: "个人中心",
+          },
+        ],
+      },
       window: {
         backgroundTextStyle: "light",
         navigationBarBackgroundColor: "#fff",

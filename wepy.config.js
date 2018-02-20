@@ -9,8 +9,9 @@ module.exports = {
   },
   resolve: {
     alias: {
-      counter: path.join(__dirname, 'src/components/counter'),
-      '@': path.join(__dirname, 'src')
+      '@': path.join(__dirname, 'src'),
+      'themes': path.join(__dirname, 'src', 'themes'),
+      'coms': path.join(__dirname, 'src', 'components'),
     },
     aliasFields: ['wepy'],
     modules: ['node_modules']

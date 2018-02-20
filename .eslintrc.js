@@ -7,7 +7,6 @@ module.exports = {
   env: {
     browser: true,
   },
-  // required to lint *.wpy files
   plugins: ["html"],
   settings: {
     "html/html-extensions": [".html", ".wpy"],
