@@ -18,11 +18,17 @@
         </swiper-item>
       </repeat>
     </swiper>
+    <navbar :tabs="tabs">
+      <view slot="0">1</view>
+      <view slot="1">2</view>
+      <view slot="2">3</view>
+    </navbar>
   </view>
 </template>
 <script>
   import wepy from "wepy";
   import Searchbar from "coms/searchbar";
+  import Navbar from 'coms/navbar';
 
   export default class Shopcart extends wepy.page {
     config = {
@@ -31,9 +37,11 @@
 
     components = {
       searchbar: Searchbar,
+      navbar: Navbar,
     };
 
     data = {
+      tabs: ['最爱护肤', '时髦妆容', '精致生活', '时尚搭配'],
       imgUrls: [
         "http://img02.tooopen.com/images/20150928/tooopen_sy_143912755726.jpg",
         "http://img06.tooopen.com/images/20160818/tooopen_sy_175866434296.jpg",

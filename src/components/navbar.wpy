@@ -1,0 +1,108 @@
+<style lang="less">
+  @import "../themes/fn.less";
+  @weuiNavBarColor: #1aad19;
+  .weui-navbar {
+    display: flex;
+    position: relative;
+    z-index: 500;
+    top: 0;
+    width: 100%;
+    border-bottom: 1rpx solid #cccccc;
+  }
+
+  .weui-navbar__item {
+    position: relative;
+    display: block;
+    flex: 1;
+    padding: 13px 0;
+    text-align: center;
+    font-size: 0;
+
+    &.weui-bar__item_on {
+      color: @weuiNavBarColor;
+    }
+  }
+  .weui-navbar__slider {
+    position: absolute;
+    content: " ";
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    background-color: @weuiNavBarColor;
+    transition: transform 0.3s;
+  }
+  .weui-navbar__title {
+    display: inline-block;
+    font-size: 15px;
+    max-width: 8em;
+    .ellipsis();
+  }
+</style>
+<template lang='pug'>
+  <view class="weui-tab">
+    <view class="weui-navbar">
+      <repeat for="{{tabs}}" key="index" index="index" item="item">
+        <view id="{{index}}" class="weui-navbar__item {{activeIndex == index ? 'weui-bar__item_on' : ''}}" @tap="tabClick({{index}})">
+          <view class="weui-navbar__title">{{item}}</view>
+        </view>
+      </repeat>
+      <view class="weui-navbar__slider" style="width: {{sliderItemWidth}}px; left: {{sliderLeft}}px; transform: translateX({{sliderOffset}}px); -webkit-transform: translateX({{sliderOffset}}px);"></view>
+    </view>
+    <view class="weui-tab__panel">
+      <!-- https://github.com/Tencent/wepy/issues/961 -->
+      <!-- https://github.com/Tencent/wepy/issues/962 -->
+      <!-- 超过5个自己加吧, slot 的内容都没办法用表达式，所以写了5个暂无内容 -->
+      <view class="weui-tab__content" hidden="{{activeIndex != 0}}">
+        <slot name="0">暂无内容</slot>
+      </view>
+      <view class="weui-tab__content" hidden="{{activeIndex != 1}}">
+        <slot name="1">暂无内容</slot>
+      </view>
+      <view class="weui-tab__content" hidden="{{activeIndex != 2}}">
+        <slot name="2">暂无内容</slot>
+      </view>
+      <view class="weui-tab__content" hidden="{{activeIndex != 3}}">
+        <slot name="3">暂无内容</slot>
+      </view>
+      <view class="weui-tab__content" hidden="{{activeIndex != 4}}">
+        <slot name="4">暂无内容</slot>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from "wepy";
+
+  export default class Navbar extends wepy.component {
+    props = {
+      tabs: {
+        type: Array,
+        default: [],
+      },
+    };
+
+    data = {
+      activeIndex: 0,
+      sliderOffset: 0,
+      sliderItemWidth: 0,
+    };
+
+    methods = {
+      tabClick(index) {
+        this.sliderOffset = index * this.sliderItemWidth;
+        this.activeIndex = index;
+      },
+    };
+
+    async onLoad() {
+      if (this.tabs.length > 5) {
+        throw new Error("tabs length > 5, please manually add tpl");
+      }
+      let res = await wepy.getSystemInfo();
+      this.sliderItemWidth = res.windowWidth / this.tabs.length;
+      this.sliderOffset = this.sliderItemWidth * this.activeIndex;
+      this.$apply();
+    }
+  }
+</script>

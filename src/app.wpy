@@ -68,6 +68,7 @@
     constructor() {
       super();
       this.use("requestfix");
+      this.use("promisify");
     }
 
     onLaunch() {

@@ -20,6 +20,7 @@ module.exports = {
     less: {
       compress: prod
     },
+    pug: {},
     /*sass: {
       outputStyle: 'compressed'
     },*/
