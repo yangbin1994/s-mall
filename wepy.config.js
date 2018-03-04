@@ -1,71 +1,65 @@
 const path = require('path');
 var prod = process.env.NODE_ENV === 'production';
+const LessPluginAutoPrefix = require('less-plugin-autoprefix');
 
 module.exports = {
   wpyExt: '.wpy',
   eslint: true,
   cliLogs: !prod,
-  build: {
-  },
+  build: {},
   resolve: {
     alias: {
       '@': path.join(__dirname, 'src'),
-      'themes': path.join(__dirname, 'src', 'themes'),
-      'coms': path.join(__dirname, 'src', 'components'),
+      themes: path.join(__dirname, 'src', 'themes'),
+      coms: path.join(__dirname, 'src', 'components'),
     },
     aliasFields: ['wepy'],
-    modules: ['node_modules']
+    modules: ['node_modules'],
   },
   compilers: {
     less: {
-      compress: prod
+      compress: !!prod,
+      plugins: [
+        new LessPluginAutoPrefix({ browsers: ['Android >= 2.3', 'Chrome > 20', 'iOS >= 6'] }),
+      ],
     },
     pug: {},
-    /*sass: {
-      outputStyle: 'compressed'
-    },*/
     babel: {
       sourceMap: !prod,
-      presets: [
-        'env'
-      ],
+      presets: ['env'],
       plugins: [
         'transform-class-properties',
         'transform-decorators-legacy',
         'transform-object-rest-spread',
         'transform-export-extensions',
-      ]
-    }
+        'lodash',
+      ],
+    },
   },
   plugins: {
   },
   appConfig: {
-    noPromiseAPI: ['createSelectorQuery']
-  }
-}
+    noPromiseAPI: ['createSelectorQuery'],
+  },
+};
 
 if (prod) {
-
-  // 压缩sass
-  // module.exports.compilers['sass'] = {outputStyle: 'compressed'}
-
   // 压缩js
   module.exports.plugins = {
     uglifyjs: {
       filter: /\.js$/,
-      config: {
-      }
+      config: {},
     },
     imagemin: {
       filter: /\.(jpg|png|jpeg)$/,
       config: {
         jpg: {
-          quality: 80
+          quality: 80,
         },
         png: {
-          quality: 80
-        }
-      }
-    }
-  }
+          quality: 80,
+        },
+      },
+    },
+  };
 }

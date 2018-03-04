@@ -1,51 +1,246 @@
-<style>
+<style lang='less'>
+  @import '../themes/fn.less';
+  @slide-height : 350rpx;
+  @dotNav-height: 200rpx;
+  @search-height: 60rpx;
   .slide-image {
     width: 100%;
     height: 100%;
   }
   .slide {
     width: 100%;
-    height: 350rpx;
+    height: @slide-height;
+  }
+  .header {
+    position: relative;
+  }
+  .search-bar {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: (@nav-height - @search-height) / 2 20rpx;
+    max-height: @nav-height;
+    box-sizing: border-box;
+    position: fixed;
+    z-index: @nav-bar-z-index / 2;
+    .inner {
+      display: flex;
+      align-items: center;
+      width: 700rpx;
+      height: @search-height;
+      background: #ccc;
+      border-radius: 30rpx;
+      box-sizing: border-box;
+      font-size: 28rpx;
+      opacity: 0.8;
+      color: #888;
+      padding: 0 20rpx;
+      icon {
+        margin-right: 10rpx;
+      }
+    }
+    &.move {
+      background: #fff;
+    }
+  }
+  .dot-nav {
+    height: @dotNav-height;
+    display: flex;
+    justify-content: space-between;
+    padding: 30rpx;
+    box-sizing: border-box;
+  }
+  .dot-nav__dot {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-content: center;
+    .image-outer {
+      width: 120rpx;
+    }
+    text {
+      width: 120rpx;
+      height: 60rpx;
+      line-height: 60rpx;
+      text-align: center;
+      font-size: 24rpx;
+    }
+  }
+  .image-outer__image {
+    width: 90rpx;
+    height: 90rpx;
+    margin: 0 auto;
+    display: block;
+  }
+  .focus-container {
+    padding: 20rpx;
+    background: #f6f6f6;
+  }
+  .focus-item {
+    margin-top: 20rpx;
+    padding: 18rpx 18rpx 0 18rpx;
+    border-radius: 6rpx;
+    background: #fff;
+    display: grid;
+    height: 270rpx;
+    grid-template-areas:
+      'title     title     image'
+      'sub-title sub-title image'
+      'message   message   message';
+    grid-template-rows: 90rpx 1fr 50rpx;
+    grid-template-columns: repeat(3, 1fr);
+    image {
+      grid-area: image;
+      width: 100%;
+      height: 100%;
+    }
+    .title {
+      grid-area: title;
+      line-height: 45rpx;
+      .ellipsisLn(2);
+      .title-text {
+        font-size: 32rpx;
+        margin-left: 4rpx;
+      }
+    }
+    .sub-title {
+      grid-area: sub-title;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      .price {
+        font-size: 40rpx;
+        margin-left: 10rpx;
+      }
+      .sub-title-tag {
+        margin-left: 10rpx;
+      }
+    }
+    .message {
+      grid-area: message;
+      font-size: 24rpx;
+      line-height: 50rpx;
+      color: #aaa;
+      .ellipsis();
+    }
   }
 </style>
-<template>
-  <view class="page">
-    <searchbar />
-    <swiper class="slide" autoplay="true" indicator-dots="true" circular="true" interval="3000" duration="1000">
-      <repeat for="{{imgUrls}}" key="index" index="index" item="item">
-        <swiper-item>
-          <image src="{{item}}" lazy-load="true" class="slide-image" />
-        </swiper-item>
-      </repeat>
-    </swiper>
-    <navbar :tabs="tabs">
-      <view slot="0">1</view>
-      <view slot="1">2</view>
-      <view slot="2">3</view>
-    </navbar>
-  </view>
+<template lang='pug'>
+  scroll-view(class='page' @scroll='onPageScroll')
+    view(class='header')
+      view(class="search-bar {{searchBarMove ? 'move' : ''}}")
+        view(class='inner')
+          icon(type='search' size='18')
+          text 搜索喜欢的商品
+      swiper(
+        class='slide'
+        autoplay='true'
+        indicator-dots='true'
+        indicator-color='rgba(255,255,255,.3)'
+        indicator-active-color='#fff'
+        circular='true'
+        interval='3000'
+        duration='1000'
+      )
+        repeat(for='{{imgUrls}}' key='index' index='index' item='item')
+          swiper-item
+            image(src='{{item}}' lazy-load='true' class='slide-image')
+    view(class='dot-nav')
+      repeat(for='{{dots}}' key='index' index='index' item='item')
+        view(class='dot-nav__dot')
+          view(class='image-outer')
+            image(class='image-outer__image' src='{{item.url}}')
+          text {{item.text}}
+    navbar(:tabs="tabs" :fixed.sync="navFixed")
+      view(slot='0')
+        view(class='focus-container')
+          repeat(for='{{focus}}' key='index' index='index' item='item')
+            view(class='focus-item')
+              view(class='title')
+                tag(text='自营')
+                text(class='title-text') 索尼（SONY）高清数码摄像机 5轴防抖 SONY京东自营店专卖 快速货运
+              view(class='sub-title')
+                text(class='price') ¥ 3299.00
+                tag1(text='直降200元' class='sub-title-tag' type='info' bubble='true' size='small')
+                tag2(text='9.4折' class='sub-title-tag' type='info' bubble='true' size='small')
+              image(src='https://m.360buyimg.com/n1/s130x130_jfs/t8161/224/1169699991/177635/eb2192c2/59b64641N088dd6ad.jpg')
+              view(class='message')
+                text 橘子先生: 这个真的好用！！满分好评！！！满分好评！！！满分好评！！！满分好评！！！满分好评！！
+      view(slot='1')
+        view(class='focus-container')
+          repeat(for='{{focus}}' key='index' index='index' item='item')
+            view(class='focus-item')
+              view(class='title')
+                tag(text='自营')
+                text(class='title-text') 索尼（SONY）高清数码摄像机 5轴防抖 SONY京东自营店专卖 快速货运
+              view(class='sub-title')
+                text(class='price') ¥ 3299.00
+                tag1(text='直降200元' class='sub-title-tag' type='info' bubble='true' size='small')
+                tag2(text='9.4折' class='sub-title-tag' type='info' bubble='true' size='small')
+              image(src='https://m.360buyimg.com/n1/s130x130_jfs/t8161/224/1169699991/177635/eb2192c2/59b64641N088dd6ad.jpg')
+              view(class='message')
+                text 橘子先生: 这个真的好用！！满分好评！！！满分好评！！！满分好评！！！满分好评！！！满分好评！！
 </template>
 <script>
-  import wepy from "wepy";
-  import Searchbar from "coms/searchbar";
-  import Navbar from 'coms/navbar';
+  import wepy from 'wepy';
+  import tag from 'coms/tag';
+  import navbar from 'coms/navbar';
+  import { getSysInfoSuccess } from '../store/actions';
+  import { connect } from 'wepy-redux';
 
+  @connect({
+    windowWidth(state) {
+      return state.app.sysInfo.windowWidth || 0;
+    },
+  })
   export default class Shopcart extends wepy.page {
     config = {
-      navigationBarTitleText: "首页",
+      navigationBarTitleText: '首页',
     };
 
     components = {
-      searchbar: Searchbar,
-      navbar: Navbar,
+      tag: tag,
+      tag1: tag,
+      tag2: tag,
+      navbar: navbar,
     };
 
     data = {
+      navFixed: false,
+      searchBarMove: false,
       tabs: ['最爱护肤', '时髦妆容', '精致生活', '时尚搭配'],
+      focus: [{}, {}, {}, {}],
+      dots: [
+        {
+          text: '京东超市',
+          url:
+            'https://m.360buyimg.com/mobilecms/jfs/t14281/4/2001573997/14338/5a719a2b/5a67003dN05690911.png',
+        },
+        {
+          text: '全球购',
+          url:
+            'https://m.360buyimg.com/mobilecms/jfs/t11425/73/2288282326/13451/e11c7697/5a14d167Ne5414496.png',
+        },
+        {
+          text: '服饰专场',
+          url:
+            'https://m.360buyimg.com/mobilecms/jfs/t5656/351/153181074/12227/e35aa8d/591d9456Naa85e195.png',
+        },
+        {
+          text: '京东生鲜',
+          url:
+            'https://m.360buyimg.com/mobilecms/jfs/t5707/83/1407890143/14681/29321e2c/59263c71Nc7d16503.png',
+        },
+        {
+          text: '京东到家',
+          url:
+            'https://m.360buyimg.com/mobilecms/jfs/t5773/256/159664156/17475/742fec7e/591d9475Na810c2eb.png',
+        },
+      ],
       imgUrls: [
-        "http://img02.tooopen.com/images/20150928/tooopen_sy_143912755726.jpg",
-        "http://img06.tooopen.com/images/20160818/tooopen_sy_175866434296.jpg",
-        "http://img06.tooopen.com/images/20160818/tooopen_sy_175833047715.jpg",
+        'https://img.alicdn.com/simba/img/TB1L8kQapuWBuNjSszbSuwS7FXa.jpg',
+        'https://img.alicdn.com/simba/img/TB1ITR2aVuWBuNjSszbSuwS7FXa.jpg',
+        'https://img.alicdn.com/simba/img/TB1ERB3aL5TBuNjSspcSuvnGFXa.jpg',
       ],
       indicatorDots: false,
       autoplay: false,
@@ -54,25 +249,20 @@
     };
 
     methods = {
-      changeIndicatorDots: function(e) {
-        this.setData({
-          indicatorDots: !this.data.indicatorDots,
-        });
-      },
-      changeAutoplay: function(e) {
-        this.setData({
-          autoplay: !this.data.autoplay,
-        });
-      },
-      intervalChange: function(e) {
-        this.setData({
-          interval: e.detail.value,
-        });
-      },
-      durationChange: function(e) {
-        this.setData({
-          duration: e.detail.value,
-        });
+      onPageScroll({ scrollTop }) {
+        const swiperAndDotHeightPx = (350 + 200) * (this.windowWidth / 750);
+        // less var
+        if (scrollTop >= swiperAndDotHeightPx) {
+          this.navFixed = true;
+        } else {
+          this.navFixed = false;
+        }
+
+        if (scrollTop > 0) {
+          this.searchBarMove = true;
+        } else {
+          this.searchBarMove = false;
+        }
       },
     };
   }

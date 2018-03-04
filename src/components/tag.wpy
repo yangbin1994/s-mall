@@ -1,0 +1,66 @@
+<style lang="less">
+  @import '../themes/fn.less';
+  .small-tag {
+    padding: 4rpx 8rpx;
+    border-radius: 8rpx;
+    color: #fff;
+    vertical-align: middle;
+  }
+  .small-tag.primary {
+    background: @primary-color;
+  }
+  .small-tag.info {
+    background: @info-color;
+  }
+  .small-tag.bubble {
+    border-radius: 14rpx;
+    border-bottom-left-radius: 0;
+  }
+  .small-tag.small {
+    font-size: 18rpx;
+  }
+  .small-tag.default {
+    font-size: 24rpx;
+  }
+</style>
+<template lang='pug'>
+  text(class='small-tag {{type}} {{bubbleClassName}} {{size}}') {{text}}
+</template>
+<script>
+  import wepy from 'wepy';
+
+  const enableTypes = ['primary', 'info'];
+
+  export default class Tag extends wepy.component {
+    props = {
+      type: {
+        type: String,
+        default: 'primary',
+      },
+      text: {
+        type: String,
+        default: '',
+      },
+      bubble: {
+        type: String,
+        default: '',
+      },
+      size: {
+        type: String,
+        default: 'default',
+      },
+    };
+
+    computed = {
+      bubbleClassName() {
+        return this.bubble ? 'bubble' : '';
+      },
+    };
+
+    onLoad() {
+      if (enableTypes.indexOf(this.type) === -1) {
+        return console.warn('tag type is not support');
+      }
+    }
+  }
+</script>
